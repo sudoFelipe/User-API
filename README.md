@@ -1,2 +1,2 @@
 # User-API
-Management Users API
+Users Management API
