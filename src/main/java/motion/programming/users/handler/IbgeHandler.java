@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import motion.programming.users.client.IbgeClient;
 import motion.programming.users.dto.CityDTO;
 import motion.programming.users.dto.StateDTO;
+import motion.programming.users.exception.CityNotFoundException;
+import motion.programming.users.exception.IbgeIntegrationException;
+import motion.programming.users.exception.StateNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -17,19 +21,23 @@ public class IbgeHandler {
 
     private final IbgeClient client;
 
-    public Mono<CityDTO> getCity(Integer id) {
+    public CityDTO getCity(Integer id) {
         try {
             return client.getCityById(id);
+        } catch (WebClientRequestException ex1) {
+            throw new IbgeIntegrationException();
         } catch (Exception ex) {
-            throw new RuntimeException();
+            throw new CityNotFoundException();
         }
     }
 
-    public Mono<StateDTO> getState(Integer id) {
+    public StateDTO getState(Integer id) {
         try {
             return client.getStateById(id);
+        } catch (WebClientRequestException ex1) {
+            throw new IbgeIntegrationException();
         } catch (Exception ex) {
-            throw new RuntimeException();
+            throw new StateNotFoundException();
         }
     }
 }

@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 public interface IbgeClient {
 
     @GetExchange("/municipios/{id}")
-    Mono<CityDTO> getCityById(@PathVariable Integer id);
+    CityDTO getCityById(@PathVariable Integer id);
 
     @GetExchange("/estados/{id}")
-    Mono<StateDTO> getStateById(@PathVariable Integer id);
+    StateDTO getStateById(@PathVariable Integer id);
 }

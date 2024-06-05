@@ -8,7 +8,6 @@ import motion.programming.users.dto.UserRequestDTO;
 import motion.programming.users.entity.User;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +16,7 @@ import java.time.LocalDateTime;
 public class UserConverter {
 
     public User toSaveUser(UserRequestDTO request) {
+
         return User.builder()
                 .cpf(request.cpf())
                 .name(request.name())
@@ -25,8 +25,6 @@ public class UserConverter {
                 .phone(request.phone())
                 .address(request.address())
                 .creationDay(LocalDateTime.now())
-                .city(null)
-                .state(null)
                 .build();
     }
 
