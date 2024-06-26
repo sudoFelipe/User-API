@@ -1,4 +1,4 @@
-package motion.programming.users.handler;
+package motion.programming.users.apis;
 
 import lombok.RequiredArgsConstructor;
 import motion.programming.users.client.IbgeClient;

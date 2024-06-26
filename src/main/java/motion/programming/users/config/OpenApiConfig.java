@@ -13,10 +13,11 @@ public class OpenApiConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("teste")
-                        .version("Teste")
+                        .title("Users API")
+                        .version("1.0")
                         .license(new License()
-                                .name("Apache 2.0")
-                                .url("http://www.apache.org/licenses/LICENSE-2.0")));
+                                .name("Motion Programming 1.0")
+//                                .url("http://www.apache.org/licenses/LICENSE-2.0")
+                        ));
     }
 }

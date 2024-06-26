@@ -2,14 +2,15 @@ package motion.programming.users.converter;
 
 import lombok.RequiredArgsConstructor;
 import motion.programming.users.controller.UserResponseDTO;
-import motion.programming.users.dto.CityDTO;
-import motion.programming.users.dto.StateDTO;
 import motion.programming.users.dto.UserRequestDTO;
 import motion.programming.users.entity.User;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+
+import static java.lang.Boolean.TRUE;
+import static motion.programming.users.utility.Format.formatAndMaskCpf;
 
 @Component
 @RequiredArgsConstructor
@@ -29,18 +30,16 @@ public class UserConverter {
     }
 
     public User toUpdateUser(UserRequestDTO request, User user) {
-        return User.builder()
-                .cpf(request.cpf())
-                .name(request.name())
-                .age(request.age())
-                .birthday(request.birthday())
-                .phone(request.phone())
-                .address(request.address())
-                .city(null)
-                .state(null)
-                .creationDay(user.getCreationDay())
-                .lastUpdate(LocalDateTime.now())
-                .build();
+
+        user.setCpf(request.cpf());
+        user.setName(request.name());
+        user.setAge(request.age());
+        user.setBirthday(request.birthday());
+        user.setPhone(request.phone());
+        user.setAddress(request.address());
+        user.setLastUpdate(LocalDateTime.now());
+
+        return user;
     }
 
     public Mono<UserResponseDTO> toUserDTO(Mono<User> user) {
@@ -56,5 +55,18 @@ public class UserConverter {
                     .state(attribute.getState().abbreviation())
                     .build();
         });
+    }
+
+    public UserResponseDTO toUserDTO(User user) {
+        return UserResponseDTO.builder()
+                .cpf(formatAndMaskCpf(user.getCpf(), TRUE))
+                .name(user.getName())
+                .age(user.getAge())
+                .birthday(user.getBirthday())
+                .phone(user.getPhone())
+                .address(user.getAddress())
+                .city(user.getCity().name())
+                .state(user.getState().abbreviation())
+                .build();
     }
 }

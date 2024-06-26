@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import motion.programming.users.converter.UserConverter;
 import motion.programming.users.dto.UserRequestDTO;
 import motion.programming.users.entity.User;
-import motion.programming.users.exception.CityNotFoundException;
-import motion.programming.users.exception.SaveUserException;
-import motion.programming.users.exception.StateNotFoundException;
-import motion.programming.users.handler.IbgeHandler;
+import motion.programming.users.apis.IbgeHandler;
 import motion.programming.users.repository.UserRepository;
 import motion.programming.users.service.UserService;
 import org.springframework.stereotype.Service;
@@ -28,24 +25,34 @@ public class UserServiceImp implements UserService {
     public Mono<User> createUser(UserRequestDTO request) {
 
         return repository.findById(request.cpf())
-                .flatMap(user -> repository.save(converter.toUpdateUser(request, user)))
+                .flatMap(user -> updateUser(request, user))
                 .switchIfEmpty(validateAndSaveUser(request));
+    }
+
+    @Override
+    public Flux<User> recoverAllUsers() {
+        return repository.findAll();
+    }
+
+
+
+    private Mono<User> updateUser(UserRequestDTO request, User user) {
+        getUserAddress(request, user);
+        return repository.save(converter.toUpdateUser(request, user));
     }
 
     private Mono<User> validateAndSaveUser(UserRequestDTO request) {
 
         return Mono.just(converter.toSaveUser(request))
                 .flatMap(user -> {
-                    user.setState(handler.getState(request.idState()));
-                    user.setCity(handler.getCity(request.idCity()));
-
+                    getUserAddress(request, user);
                     return repository.save(user);
                 })
-                .doOnError(error -> new SaveUserException());
+                .doOnError(error -> log.error("There was a problem saving user."));
     }
 
-    @Override
-    public Flux<User> recoverAllUsers() {
-        return repository.findAll();
+    private void getUserAddress(UserRequestDTO request, User user) {
+        user.setState(handler.getState(request.idState()));
+        user.setCity(handler.getCity(request.idCity()));
     }
 }
