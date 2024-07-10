@@ -26,9 +26,6 @@ public class User {
     @Field("nome")
     private String name;
 
-    @Field("idade")
-    private Integer age;
-
     @Field("nascimento")
     private LocalDate birthday;
 
@@ -49,4 +46,22 @@ public class User {
 
     @Field("ultimaAtualizacao")
     private LocalDateTime lastUpdate;
+
+    public int getCurrentAge() {
+        final var today = LocalDate.now();
+        final var differenceYears = today.minusYears(this.getBirthday().getYear()).getYear();
+
+        if (isMonthAfterBirthday(today) || isDayAfterBirthday(today))
+            return differenceYears;
+
+        return differenceYears - 1;
+    }
+
+    private boolean isDayAfterBirthday(LocalDate today) {
+        return today.getMonthValue() == this.birthday.getMonthValue() && today.getDayOfMonth() > this.birthday.getDayOfMonth();
+    }
+
+    private boolean isMonthAfterBirthday(LocalDate today) {
+        return today.getMonthValue() > this.birthday.getMonthValue();
+    }
 }

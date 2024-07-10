@@ -21,7 +21,6 @@ public class UserConverter {
         return User.builder()
                 .cpf(request.cpf())
                 .name(request.name())
-                .age(request.age())
                 .birthday(request.birthday())
                 .phone(request.phone())
                 .address(request.address())
@@ -33,7 +32,6 @@ public class UserConverter {
 
         user.setCpf(request.cpf());
         user.setName(request.name());
-        user.setAge(request.age());
         user.setBirthday(request.birthday());
         user.setPhone(request.phone());
         user.setAddress(request.address());
@@ -42,26 +40,11 @@ public class UserConverter {
         return user;
     }
 
-    public Mono<UserResponseDTO> toUserDTO(Mono<User> user) {
-        return user.map(attribute -> {
-            return UserResponseDTO.builder()
-                    .cpf(attribute.getCpf())
-                    .name(attribute.getName())
-                    .age(attribute.getAge())
-                    .birthday(attribute.getBirthday())
-                    .phone(attribute.getPhone())
-                    .address(attribute.getAddress())
-                    .city(attribute.getCity().name())
-                    .state(attribute.getState().abbreviation())
-                    .build();
-        });
-    }
-
     public UserResponseDTO toUserDTO(User user) {
         return UserResponseDTO.builder()
                 .cpf(formatAndMaskCpf(user.getCpf(), TRUE))
                 .name(user.getName())
-                .age(user.getAge())
+                .age(user.getCurrentAge())
                 .birthday(user.getBirthday())
                 .phone(user.getPhone())
                 .address(user.getAddress())

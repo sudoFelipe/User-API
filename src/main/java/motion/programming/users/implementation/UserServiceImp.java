@@ -2,10 +2,11 @@ package motion.programming.users.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import motion.programming.users.apis.IbgeHandler;
 import motion.programming.users.converter.UserConverter;
 import motion.programming.users.dto.UserRequestDTO;
 import motion.programming.users.entity.User;
-import motion.programming.users.apis.IbgeHandler;
+import motion.programming.users.exception.UserNotFoundException;
 import motion.programming.users.repository.UserRepository;
 import motion.programming.users.service.UserService;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,14 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public Flux<User> recoverAllUsers() {
+    public Flux<User> findUsers() {
         return repository.findAll();
     }
 
+    @Override
+    public Mono<User> findUserByCpf(String cpf) {
+        return repository.findById(cpf).switchIfEmpty(Mono.error(UserNotFoundException::new));
+    }
 
 
     private Mono<User> updateUser(UserRequestDTO request, User user) {

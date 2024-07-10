@@ -13,8 +13,6 @@ public record UserRequestDTO(
         String cpf,
         @NotNull(message = "field name required.")
         String name,
-        @NotNull(message = "field age required.")
-        Integer age,
         @NotNull(message = "field birthday required.")
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate birthday,
