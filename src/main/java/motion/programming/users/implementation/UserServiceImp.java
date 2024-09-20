@@ -9,14 +9,21 @@ import motion.programming.users.entity.User;
 import motion.programming.users.exception.UserNotFoundException;
 import motion.programming.users.repository.UserRepository;
 import motion.programming.users.service.UserService;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImp implements UserService {
+public class UserServiceImp implements UserService, ReactiveUserDetailsService {
 
     private final UserRepository repository;
     private final UserConverter converter;
@@ -59,5 +66,16 @@ public class UserServiceImp implements UserService {
     private void getUserAddress(UserRequestDTO request, User user) {
         user.setState(handler.getState(request.idState()));
         user.setCity(handler.getCity(request.idCity()));
+    }
+
+    @Override
+    public Mono<UserDetails> findByUsername(String username) {
+        return repository.findByEmail(username)
+                .map(user -> org.springframework.security.core.userdetails.User.builder()
+                            .username(user.getUsername())
+                            .password(user.getPassword())
+                            .roles(user.getRole().toString())
+                            .build())
+                .switchIfEmpty(Mono.error(UserNotFoundException::new));
     }
 }

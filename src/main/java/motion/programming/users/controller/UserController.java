@@ -10,6 +10,7 @@ import motion.programming.users.security.TokenProvider;
 import motion.programming.users.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +29,12 @@ public class UserController implements UserDocumentation {
     private final UserService service;
     private final UserConverter converter;
     private final TokenProvider tokenProvider;
-    private final ReactiveUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final ReactiveUserDetailsService userDetailsService;
 
     private static final String URI_API_CREATED = "/api/motion/user/{id}";
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<UserResponseDTO>> createUser(@RequestBody UserRequestDTO requestDTO, UriComponentsBuilder uriBuilder) {
         return service.createUser(requestDTO).map(info -> ResponseEntity.created(uriBuilder
@@ -40,7 +42,8 @@ public class UserController implements UserDocumentation {
                         .body(converter.toUserDTO(info)));
     }
 
-    @GetMapping(value = "/login",consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
+    @PostMapping(value = "/login",consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public Mono<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         return userDetailsService.findByUsername(loginRequestDTO.username())
                 .filter(user -> passwordEncoder.matches(loginRequestDTO.password(), user.getPassword()))
@@ -49,11 +52,13 @@ public class UserController implements UserDocumentation {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public Flux<UserResponseDTO> findAllUsers() {
         return service.findUsers().map(this.converter::toUserDTO);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
     @GetMapping(value = "/{cpf}", produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<UserResponseDTO>> findUser(@PathVariable String cpf) {
         return service.findUserByCpf(cpf).map(info -> ResponseEntity.ok(this.converter.toUserDTO(info)));

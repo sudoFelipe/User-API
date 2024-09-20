@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import motion.programming.users.controller.UserResponseDTO;
+import motion.programming.users.dto.LoginRequestDTO;
+import motion.programming.users.dto.LoginResponseDTO;
 import motion.programming.users.dto.UserRequestDTO;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,16 @@ public interface UserDocumentation {
             @ApiResponse(responseCode = BAD_REQUEST, description = BAD_REQUEST_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = INTERNAL_SERVER_ERROR, description = INTERNAL_SERVER_ERROR_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE))})
     public Mono<ResponseEntity<UserResponseDTO>> createUser(@RequestBody @Valid UserRequestDTO requestDTO, UriComponentsBuilder uriBuilder);
+
+    @Operation(summary = "Login", description = "User's login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = SUCCESS, description = SUCCESS_CODE, content =
+                    { @Content(mediaType = APPLICATION_JSON_VALUE, schema =
+                    @Schema(implementation = LoginResponseDTO.class)) }),
+            @ApiResponse(responseCode = NOT_FOUND, description = NOT_FOUND_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = BAD_REQUEST, description = BAD_REQUEST_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = INTERNAL_SERVER_ERROR, description = INTERNAL_SERVER_ERROR_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE))})
+    public Mono<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO);
 
     @Operation(summary = "Recover all users", description = "List of users")
     @ApiResponses(value = {
