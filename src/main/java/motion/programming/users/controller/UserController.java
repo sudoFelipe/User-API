@@ -34,7 +34,7 @@ public class UserController implements UserDocumentation {
 
     private static final String URI_API_CREATED = "/api/motion/user/{id}";
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<UserResponseDTO>> createUser(@RequestBody UserRequestDTO requestDTO, UriComponentsBuilder uriBuilder) {
         return service.createUser(requestDTO).map(info -> ResponseEntity.created(uriBuilder
@@ -42,7 +42,7 @@ public class UserController implements UserDocumentation {
                         .body(converter.toUserDTO(info)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
+
     @PostMapping(value = "/login",consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public Mono<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         return userDetailsService.findByUsername(loginRequestDTO.username())
