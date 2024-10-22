@@ -52,13 +52,13 @@ public class UserController implements UserDocumentation {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public Flux<UserResponseDTO> findAllUsers() {
         return service.findUsers().map(this.converter::toUserDTO);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
     @GetMapping(value = "/{cpf}", produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<UserResponseDTO>> findUser(@PathVariable String cpf) {
         return service.findUserByCpf(cpf).map(info -> ResponseEntity.ok(this.converter.toUserDTO(info)));
