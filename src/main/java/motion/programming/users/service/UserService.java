@@ -12,4 +12,5 @@ public interface UserService {
     Mono<User> createUser(UserRequestDTO request);
     Flux<User> findUsers();
     Mono<User> findUserByCpf(String cpf);
+    Flux<User> findUserByState(Integer uf);
 }

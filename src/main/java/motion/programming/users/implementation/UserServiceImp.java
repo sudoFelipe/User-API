@@ -27,6 +27,7 @@ public class UserServiceImp implements UserService, ReactiveUserDetailsService {
 
     private final UserRepository repository;
     private final UserConverter converter;
+
     private final IbgeHandler handler;
 
     @Override
@@ -47,6 +48,10 @@ public class UserServiceImp implements UserService, ReactiveUserDetailsService {
         return repository.findById(cpf).switchIfEmpty(Mono.error(UserNotFoundException::new));
     }
 
+    @Override
+    public Flux<User> findUserByState(Integer uf) {
+        return repository.findUserByStateId(uf).switchIfEmpty(Mono.error(UserNotFoundException::new));
+    }
 
     private Mono<User> updateUser(UserRequestDTO request, User user) {
         getUserAddress(request, user);

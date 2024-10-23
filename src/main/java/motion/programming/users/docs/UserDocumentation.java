@@ -63,4 +63,14 @@ public interface UserDocumentation {
             @ApiResponse(responseCode = BAD_REQUEST, description = BAD_REQUEST_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = INTERNAL_SERVER_ERROR, description = INTERNAL_SERVER_ERROR_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE))})
     public Mono<ResponseEntity<UserResponseDTO>> findUser(@CPF String cpf);
+
+    @Operation(summary = "Recover user by UF", description = "Get user by UF")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = SUCCESS, description = SUCCESS_CODE, content =
+                    { @Content(mediaType = APPLICATION_JSON_VALUE, schema =
+                    @Schema(implementation = UserResponseDTO.class)) }),
+            @ApiResponse(responseCode = NOT_FOUND, description = NOT_FOUND_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = BAD_REQUEST, description = BAD_REQUEST_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = INTERNAL_SERVER_ERROR, description = INTERNAL_SERVER_ERROR_CODE, content = @Content(mediaType = APPLICATION_JSON_VALUE))})
+    public Flux<UserResponseDTO> findUserByUf(Integer uf);
 }

@@ -63,4 +63,10 @@ public class UserController implements UserDocumentation {
     public Mono<ResponseEntity<UserResponseDTO>> findUser(@PathVariable String cpf) {
         return service.findUserByCpf(cpf).map(info -> ResponseEntity.ok(this.converter.toUserDTO(info)));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER','ROLE_USER')")
+    @GetMapping(value = "/location/{uf}", produces = APPLICATION_JSON_VALUE)
+    public Flux<UserResponseDTO> findUserByUf(@PathVariable Integer uf) {
+        return service.findUserByState(uf).map(this.converter::toUserDTO);
+    }
 }
